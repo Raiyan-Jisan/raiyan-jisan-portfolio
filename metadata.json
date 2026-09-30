@@ -1,0 +1,6 @@
+{
+  "name": "Md Raiyan Bin Jisan Portfolio",
+  "description": "Modern, minimal personal portfolio website for Md Raiyan Bin Jisan, a CSE student learning web development.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
