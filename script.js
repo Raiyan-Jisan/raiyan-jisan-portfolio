@@ -14,24 +14,20 @@ document.addEventListener("DOMContentLoaded", () => {
      1. Theme Management (Dark / Light Mode)
      Checks localStorage first, then system preference, and updates <html>
      -------------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------------
+     1. Theme Management (Dark / Light Mode)
+     -------------------------------------------------------------------------- */
   const themeToggleBtn = document.getElementById("theme-toggle-btn");
   const rootElement = document.documentElement;
 
-  // Function to get initial theme
-  function getPreferredTheme() {
-    const savedTheme = localStorage.getItem("portfolio_theme");
-    if (savedTheme) {
-      return savedTheme;
-    }
-    // Default to system preference if no saved choice
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    return prefersDark ? "dark" : "light";
-  }
-
-  // Apply theme to DOM and persist to localStorage
   function applyTheme(theme) {
     rootElement.setAttribute("data-theme", theme);
-    localStorage.setItem("portfolio_theme", theme);
+
+    try {
+      localStorage.setItem("portfolio_theme", theme);
+    } catch (error) {
+      // Ignore storage errors
+    }
 
     if (themeToggleBtn) {
       const isDark = theme === "dark";
@@ -39,30 +35,35 @@ document.addEventListener("DOMContentLoaded", () => {
         "aria-label",
         isDark ? "Switch to light theme" : "Switch to dark theme"
       );
-      themeToggleBtn.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
+      themeToggleBtn.setAttribute(
+        "title",
+        isDark ? "Switch to light mode" : "Switch to dark mode"
+      );
     }
   }
 
-  // Initialize theme on page load
-  const currentTheme = getPreferredTheme();
-  applyTheme(currentTheme);
+  let savedTheme = null;
 
-  // Toggle theme when user clicks the button
+  try {
+    savedTheme = localStorage.getItem("portfolio_theme");
+  } catch (error) {
+    savedTheme = null;
+  }
+
+  const initialTheme = savedTheme || "light";
+  applyTheme(initialTheme);
+
   if (themeToggleBtn) {
-    themeToggleBtn.addEventListener("click", () => {
-      const activeTheme = rootElement.getAttribute("data-theme") || "light";
-      const newTheme = activeTheme === "dark" ? "light" : "dark";
+    themeToggleBtn.addEventListener("click", function () {
+      const currentTheme =
+        rootElement.getAttribute("data-theme") || "light";
+
+      const newTheme =
+        currentTheme === "dark" ? "light" : "dark";
+
       applyTheme(newTheme);
     });
   }
-
-  // Listen for OS system theme changes if user has not explicitly set a preference
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    if (!localStorage.getItem("portfolio_theme")) {
-      applyTheme(e.matches ? "dark" : "light");
-    }
-  });
-
 
   /* --------------------------------------------------------------------------
      2. Mobile Navigation Toggle
